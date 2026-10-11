@@ -1,0 +1,882 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+double TARIFA_BASE = 2.5;
+double VELOCIDAD_PROMEDIO = 18.0;
+
+void mostrarMenu();
+
+void inicializarRepartidores(int**& repartidores, int cantidad);
+
+int buscarRepartidorDisponible(int** repartidores, int cantidad);
+
+void calcularDelivery(double distancia, double& costo, int& tiempo);
+
+bool existeCodigo(int* codigos, int totalPedidos, int codigo);
+
+void registrarPedido(
+    int* codigos,
+    string* clientes,
+    string* distritos,
+    double* montos,
+    double* distancias,
+    double* costos,
+    int* tiempos,
+    int* repartidorAsignado,
+    bool* entregados,
+    int& totalPedidos,
+    int capacidad,
+    int** repartidores,
+    int cantidadRepartidores
+);
+
+void mostrarPedidos(
+    int* codigos,
+    string* clientes,
+    string* distritos,
+    double* montos,
+    double* distancias,
+    double* costos,
+    int* tiempos,
+    int* repartidorAsignado,
+    bool* entregados,
+    int totalPedidos
+);
+
+void mostrarRepartidores(
+    int** repartidores,
+    int cantidadRepartidores
+);
+
+void marcarPedidoEntregado(
+    int* codigos,
+    bool* entregados,
+    int* repartidorAsignado,
+    int** repartidores,
+    int totalPedidos,
+    int cantidadRepartidores
+);
+
+void mostrarReportes(
+    int* codigos,
+    string* clientes,
+    string* distritos,
+    double* montos,
+    bool* entregados,
+    int** repartidores,
+    int totalPedidos,
+    int cantidadRepartidores
+);
+
+void liberarMemoria(
+    int**& repartidores,
+    int cantidadRepartidores
+);
+
+void mostrarMenu()
+{
+    cout << "\n==========================================" << endl;
+    cout << "      SISTEMA DE GESTION DE DELIVERY" << endl;
+    cout << "--------------INSTA THINGS---------------" << endl;
+    cout << "==========================================" << endl;
+    cout << "1. Registrar pedido" << endl;
+    cout << "2. Mostrar pedidos" << endl;
+    cout << "3. Marcar pedido como entregado" << endl;
+    cout << "4. Mostrar matriz de repartidores" << endl;
+    cout << "5. Mostrar reportes" << endl;
+    cout << "0. Salir" << endl;
+    cout << "==========================================" << endl;
+    cout << "Seleccione una opcion: ";
+}
+
+void inicializarRepartidores(
+    int**& repartidores,
+    int cantidad
+)
+{
+    repartidores = new int*[cantidad];
+
+    for (int i = 0; i < cantidad; i++)
+    {
+        repartidores[i] = new int[2];
+
+        /*
+            Columna 0:
+            1 = disponible
+            0 = ocupado
+
+            Columna 1:
+            cantidad de entregas realizadas
+        */
+
+        repartidores[i][0] = 1;
+        repartidores[i][1] = 0;
+    }
+}
+
+int buscarRepartidorDisponible(
+    int** repartidores,
+    int cantidad
+)
+{
+    for (int i = 0; i < cantidad; i++)
+    {
+        if (repartidores[i][0] == 1)
+        {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+void calcularDelivery(
+    double distancia,
+    double& costo,
+    int& tiempo
+)
+{
+    costo = distancia * TARIFA_BASE;
+
+    tiempo =
+        (int)((distancia / VELOCIDAD_PROMEDIO) * 60 + 10);
+}
+
+bool existeCodigo(
+    int* codigos,
+    int totalPedidos,
+    int codigo
+)
+{
+    for (int i = 0; i < totalPedidos; i++)
+    {
+        if (codigos[i] == codigo)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void registrarPedido(
+    int* codigos,
+    string* clientes,
+    string* distritos,
+    double* montos,
+    double* distancias,
+    double* costos,
+    int* tiempos,
+    int* repartidorAsignado,
+    bool* entregados,
+    int& totalPedidos,
+    int capacidad,
+    int** repartidores,
+    int cantidadRepartidores
+)
+{
+    if (totalPedidos >= capacidad)
+    {
+        cout << "\nSe alcanzo la capacidad maxima de pedidos."
+             << endl;
+
+        return;
+    }
+
+    int codigo;
+    string cliente;
+    string distrito;
+    double monto;
+    double distancia;
+
+    cout << "\n=========================================="
+         << endl;
+
+    cout << "             REGISTRO DE PEDIDO"
+         << endl;
+
+    cout << "=========================================="
+         << endl;
+
+    cout << "Codigo del pedido: ";
+    cin >> codigo;
+
+    if (codigo <= 0)
+    {
+        cout << "Codigo invalido." << endl;
+        return;
+    }
+
+    if (existeCodigo(codigos, totalPedidos, codigo))
+    {
+        cout << "El codigo del pedido ya existe."
+             << endl;
+
+        return;
+    }
+
+    cin.ignore();
+
+    cout << "Cliente: ";
+    getline(cin, cliente);
+
+    if (cliente == "")
+    {
+        cout << "El cliente es obligatorio."
+             << endl;
+
+        return;
+    }
+
+    cout << "Distrito: ";
+    getline(cin, distrito);
+
+    if (distrito == "")
+    {
+        cout << "El distrito es obligatorio."
+             << endl;
+
+        return;
+    }
+
+    cout << "Monto del pedido: S/. ";
+    cin >> monto;
+
+    if (monto <= 0)
+    {
+        cout << "Monto invalido." << endl;
+        return;
+    }
+
+    cout << "Distancia en kilometros: ";
+    cin >> distancia;
+
+    if (distancia <= 0)
+    {
+        cout << "Distancia invalida." << endl;
+        return;
+    }
+
+    /*
+        Se busca el repartidor despues de validar
+        todos los datos del pedido.
+    */
+
+    int repartidor = buscarRepartidorDisponible(
+        repartidores,
+        cantidadRepartidores
+    );
+
+    if (repartidor == -1)
+    {
+        cout << "\nNo hay repartidores disponibles."
+             << endl;
+
+        cout << "El pedido no puede ser registrado por ahora."
+             << endl;
+
+        return;
+    }
+
+    double costoDelivery;
+    int tiempoEstimado;
+
+    calcularDelivery(
+        distancia,
+        costoDelivery,
+        tiempoEstimado
+    );
+
+    codigos[totalPedidos] = codigo;
+
+    clientes[totalPedidos] = cliente;
+
+    distritos[totalPedidos] = distrito;
+
+    montos[totalPedidos] = monto;
+
+    distancias[totalPedidos] = distancia;
+
+    costos[totalPedidos] = costoDelivery;
+
+    tiempos[totalPedidos] = tiempoEstimado;
+
+    repartidorAsignado[totalPedidos] = repartidor;
+
+    entregados[totalPedidos] = false;
+
+    repartidores[repartidor][0] = 0;
+
+    cout << "\n=========================================="
+         << endl;
+
+    cout << "       PEDIDO REGISTRADO CORRECTAMENTE"
+         << endl;
+
+    cout << "=========================================="
+         << endl;
+
+    cout << "Codigo: "
+         << codigo
+         << endl;
+
+    cout << "Cliente: "
+         << cliente
+         << endl;
+
+    cout << "Distrito: "
+         << distrito
+         << endl;
+
+    cout << "Monto: S/. "
+         << monto
+         << endl;
+
+    cout << "Distancia: "
+         << distancia
+         << " km"
+         << endl;
+
+    cout << "Costo de delivery: S/. "
+         << costoDelivery
+         << endl;
+
+    cout << "Tiempo estimado: "
+         << tiempoEstimado
+         << " minutos"
+         << endl;
+
+    cout << "Repartidor asignado automaticamente: "
+         << repartidor + 1
+         << endl;
+
+    cout << "Estado: Ocupado"
+         << endl;
+
+    cout << "=========================================="
+         << endl;
+
+    totalPedidos++;
+}
+
+void mostrarPedidos(
+    int* codigos,
+    string* clientes,
+    string* distritos,
+    double* montos,
+    double* distancias,
+    double* costos,
+    int* tiempos,
+    int* repartidorAsignado,
+    bool* entregados,
+    int totalPedidos
+)
+{
+    cout << "\n=========================================="
+         << endl;
+
+    cout << "              PEDIDOS REGISTRADOS"
+         << endl;
+
+    cout << "=========================================="
+         << endl;
+
+    if (totalPedidos == 0)
+    {
+        cout << "No hay pedidos registrados."
+             << endl;
+
+        return;
+    }
+
+    for (int i = 0; i < totalPedidos; i++)
+    {
+        cout << "\n------------------------------------------"
+             << endl;
+
+        cout << "Codigo: "
+             << codigos[i]
+             << endl;
+
+        cout << "Cliente: "
+             << clientes[i]
+             << endl;
+
+        cout << "Distrito: "
+             << distritos[i]
+             << endl;
+
+        cout << "Monto: S/. "
+             << montos[i]
+             << endl;
+
+        cout << "Distancia: "
+             << distancias[i]
+             << " km"
+             << endl;
+
+        cout << "Costo delivery: S/. "
+             << costos[i]
+             << endl;
+
+        cout << "Tiempo estimado: "
+             << tiempos[i]
+             << " minutos"
+             << endl;
+
+        cout << "Repartidor: "
+             << repartidorAsignado[i] + 1
+             << endl;
+
+        if (entregados[i] == true)
+        {
+            cout << "Estado: ENTREGADO"
+                 << endl;
+        }
+        else
+        {
+            cout << "Estado: PENDIENTE"
+                 << endl;
+        }
+    }
+
+    cout << "------------------------------------------"
+         << endl;
+}
+
+void mostrarRepartidores(
+    int** repartidores,
+    int cantidadRepartidores
+)
+{
+    cout << "\n=========================================="
+         << endl;
+
+    cout << "          MATRIZ DE REPARTIDORES"
+         << endl;
+
+    cout << "=========================================="
+         << endl;
+
+    cout << "Repartidor\tEstado\t\tEntregas"
+         << endl;
+
+    for (int i = 0; i < cantidadRepartidores; i++)
+    {
+        cout << "Repartidor "
+             << i + 1
+             << "\t";
+
+        if (repartidores[i][0] == 1)
+        {
+            cout << "Disponible\t";
+        }
+        else
+        {
+            cout << "Ocupado\t\t";
+        }
+
+        cout << repartidores[i][1]
+             << endl;
+    }
+
+    cout << "=========================================="
+         << endl;
+}
+
+void marcarPedidoEntregado(
+    int* codigos,
+    bool* entregados,
+    int* repartidorAsignado,
+    int** repartidores,
+    int totalPedidos,
+    int cantidadRepartidores
+)
+{
+    if (totalPedidos == 0)
+    {
+        cout << "\nNo hay pedidos registrados."
+             << endl;
+
+        return;
+    }
+
+    int codigo;
+    bool encontrado = false;
+
+    cout << "\nCodigo del pedido entregado: ";
+    cin >> codigo;
+
+    for (int i = 0; i < totalPedidos; i++)
+    {
+        if (codigos[i] == codigo)
+        {
+            encontrado = true;
+
+            if (entregados[i] == true)
+            {
+                cout << "\nEl pedido ya fue entregado."
+                     << endl;
+
+                return;
+            }
+
+            entregados[i] = true;
+
+            int repartidor =
+                repartidorAsignado[i];
+
+            if (repartidor >= 0 &&
+                repartidor < cantidadRepartidores)
+            {
+                /*
+                    El repartidor vuelve a estar disponible
+                    y aumenta su cantidad de entregas.
+                */
+
+                repartidores[repartidor][0] = 1;
+
+                repartidores[repartidor][1]++;
+            }
+
+            cout << "\n=========================================="
+                 << endl;
+
+            cout << "          PEDIDO ENTREGADO"
+                 << endl;
+
+            cout << "=========================================="
+                 << endl;
+
+            cout << "Codigo del pedido: "
+                 << codigo
+                 << endl;
+
+            cout << "Repartidor: "
+                 << repartidor + 1
+                 << endl;
+
+            cout << "Estado del pedido: ENTREGADO"
+                 << endl;
+
+            cout << "Estado del repartidor: DISPONIBLE"
+                 << endl;
+
+            cout << "=========================================="
+                 << endl;
+
+            break;
+        }
+    }
+
+    if (encontrado == false)
+    {
+        cout << "\nNo se encontro el pedido."
+             << endl;
+    }
+}
+
+void mostrarReportes(
+    int* codigos,
+    string* clientes,
+    string* distritos,
+    double* montos,
+    bool* entregados,
+    int** repartidores,
+    int totalPedidos,
+    int cantidadRepartidores
+)
+{
+    cout << "\n=========================================="
+         << endl;
+
+    cout << "                  REPORTES"
+         << endl;
+
+    cout << "=========================================="
+         << endl;
+
+    int cantidadEntregados = 0;
+
+    cout << "\n--- PEDIDOS ENTREGADOS ---"
+         << endl;
+
+    for (int i = 0; i < totalPedidos; i++)
+    {
+        if (entregados[i] == true)
+        {
+            cout << "Codigo: "
+                 << codigos[i]
+                 << " | Cliente: "
+                 << clientes[i]
+                 << " | Distrito: "
+                 << distritos[i]
+                 << " | Monto: S/. "
+                 << montos[i]
+                 << endl;
+
+            cantidadEntregados++;
+        }
+    }
+
+    if (cantidadEntregados == 0)
+    {
+        cout << "No hay pedidos entregados."
+             << endl;
+    }
+
+    cout << "\nTotal de pedidos: "
+         << totalPedidos
+         << endl;
+
+    cout << "Total de pedidos entregados: "
+         << cantidadEntregados
+         << endl;
+
+    cout << "Total de pedidos pendientes: "
+         << totalPedidos - cantidadEntregados
+         << endl;
+
+    if (cantidadEntregados > 0)
+    {
+        int mejorRepartidor = 0;
+
+        int mayorCantidad =
+            repartidores[0][1];
+
+        for (int i = 1;
+             i < cantidadRepartidores;
+             i++)
+        {
+            if (repartidores[i][1] > mayorCantidad)
+            {
+                mayorCantidad =
+                    repartidores[i][1];
+
+                mejorRepartidor = i;
+            }
+        }
+
+        cout << "\n--- REPARTIDOR CON MAS ENTREGAS ---"
+             << endl;
+
+        cout << "Repartidor: "
+             << mejorRepartidor + 1
+             << endl;
+
+        cout << "Entregas realizadas: "
+             << mayorCantidad
+             << endl;
+    }
+
+    cout << "=========================================="
+         << endl;
+}
+
+void liberarMemoria(
+    int**& repartidores,
+    int cantidadRepartidores
+)
+{
+    for (int i = 0;
+         i < cantidadRepartidores;
+         i++)
+    {
+        delete[] repartidores[i];
+    }
+
+    delete[] repartidores;
+
+    repartidores = 0;
+}
+
+int main()
+{
+    int cantidadRepartidores;
+    int capacidadPedidos;
+
+    cout << "=========================================="
+         << endl;
+
+    cout << "      CONFIGURACION DEL SISTEMA"
+         << endl;
+
+    cout << "=========================================="
+         << endl;
+
+    cout << "Ingrese cantidad de repartidores: ";
+    cin >> cantidadRepartidores;
+
+    while (cantidadRepartidores <= 0)
+    {
+        cout << "Cantidad invalida. "
+             << "Ingrese nuevamente: ";
+
+        cin >> cantidadRepartidores;
+    }
+
+    cout << "Ingrese cantidad maxima de pedidos: ";
+    cin >> capacidadPedidos;
+
+    while (capacidadPedidos <= 0)
+    {
+        cout << "Cantidad invalida. "
+             << "Ingrese nuevamente: ";
+
+        cin >> capacidadPedidos;
+    }
+
+    int** repartidores;
+
+    inicializarRepartidores(
+        repartidores,
+        cantidadRepartidores
+    );
+
+    int* codigos =
+        new int[capacidadPedidos];
+
+    string* clientes =
+        new string[capacidadPedidos];
+
+    string* distritos =
+        new string[capacidadPedidos];
+
+    double* montos =
+        new double[capacidadPedidos];
+
+    double* distancias =
+        new double[capacidadPedidos];
+
+    double* costos =
+        new double[capacidadPedidos];
+
+    int* tiempos =
+        new int[capacidadPedidos];
+
+    int* repartidorAsignado =
+        new int[capacidadPedidos];
+
+    bool* entregados =
+        new bool[capacidadPedidos];
+
+    int totalPedidos = 0;
+
+    int opcion;
+
+    do
+    {
+        mostrarMenu();
+
+        cin >> opcion;
+
+        switch (opcion)
+        {
+        case 1:
+
+            registrarPedido(
+                codigos,
+                clientes,
+                distritos,
+                montos,
+                distancias,
+                costos,
+                tiempos,
+                repartidorAsignado,
+                entregados,
+                totalPedidos,
+                capacidadPedidos,
+                repartidores,
+                cantidadRepartidores
+            );
+
+            break;
+
+        case 2:
+
+            mostrarPedidos(
+                codigos,
+                clientes,
+                distritos,
+                montos,
+                distancias,
+                costos,
+                tiempos,
+                repartidorAsignado,
+                entregados,
+                totalPedidos
+            );
+
+            break;
+
+        case 3:
+
+            marcarPedidoEntregado(
+                codigos,
+                entregados,
+                repartidorAsignado,
+                repartidores,
+                totalPedidos,
+                cantidadRepartidores
+            );
+
+            break;
+
+        case 4:
+
+            mostrarRepartidores(
+                repartidores,
+                cantidadRepartidores
+            );
+
+            break;
+
+        case 5:
+
+            mostrarReportes(
+                codigos,
+                clientes,
+                distritos,
+                montos,
+                entregados,
+                repartidores,
+                totalPedidos,
+                cantidadRepartidores
+            );
+
+            break;
+
+        case 0:
+
+            cout << "\nPrograma finalizado."
+                 << endl;
+
+            break;
+
+        default:
+
+            cout << "\nOpcion invalida."
+                 << endl;
+        }
+
+    } while (opcion != 0);
+
+    delete[] codigos;
+    delete[] clientes;
+    delete[] distritos;
+    delete[] montos;
+    delete[] distancias;
+    delete[] costos;
+    delete[] tiempos;
+    delete[] repartidorAsignado;
+    delete[] entregados;
+
+    liberarMemoria(
+        repartidores,
+        cantidadRepartidores
+    );
+
+    return 0;
+}
