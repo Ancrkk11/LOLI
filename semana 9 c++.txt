@@ -1,0 +1,659 @@
+1.-
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+	string frase;
+	cout << "Ingrese una frase: ";
+	getline(cin,frase);
+	cout << "La cantidad de caracteres es: " << frase.length();
+	return 0;
+}
+
+2.-
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+	string palabra;
+	int vocales = 0, consonantes = 0; 
+	cout << "Ingrese una palabra: ";
+	cin >> palabra;
+
+	for (int i=0;i<palabra.length();i++) {
+		char c = tolower(palabra[i]);
+		if (c=='a'|| c=='e' || c=='i' || c=='o' || c=='u') {
+			vocales++;
+		} else {
+			consonantes++;
+		}
+	}
+
+	cout << "Cantidad de vocales: " << vocales << endl;
+	cout << "Cantidad de consonantes: " << consonantes;
+	return 0;
+}
+
+3.-
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+	char frase[100];
+	cout <<  "Ingrese una cadena: ";
+	cin.getline(frase,100);
+	for (int i=0; frase[i]!='\0'; i++)
+		frase[i] = toupper(frase[i]);
+	
+	cout << frase;
+	return 0;
+}
+
+4.-
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+	string palabra;
+
+	cout << "Ingrese una palabra: ";
+	cin >> palabra;
+
+	cout << "El longitud de la palabra es: " << palabra.length();
+	return 0;
+}
+
+5.-
+#include <iostream>
+#include <string>
+#include <cctype>
+using namespace std;
+
+int main() {
+	string frase;
+	cout << "Ingrese una frase: ";
+	getline(cin, frase);
+	for (int i=0;frase[i];i++) {
+		frase[i] = toupper(frase[i]);
+	}
+	cout << frase;
+	return 0;
+}
+
+6.-
+#include <iostream>
+#include <string>
+#include <cctype>
+using namespace std;
+
+int main() {
+	string palabra;
+	int vocales = 0;
+	cout << "Ingrese una palabra: ";
+	cin >> palabra;
+	for (int i =0;i<palabra.length();i++) {
+		char c = tolower(palabra[i]);
+		if (c=='a' || c=='e' || c=='i' || c== 'o' || c== 'u') {
+			vocales++;
+		}
+	}
+	cout << "La cantidad de vocales que contiene es: " << vocales;
+	return 0;
+}
+
+7.-
+#include <iostream>
+#include <string>
+#include <cctype>
+using namespace std;
+
+int main() {
+	char palabra1[20];
+	cout << "Ingrese la primera palabra: ";
+	cin >>palabra1;
+	char palabra2[20];
+	cout << "Ingrese la segunda palabra: ";
+	cin >> palabra2;
+	strcat(palabra1,palabra2);
+	
+	cout << palabra1;
+	return 0;
+}
+
+8.-
+#include <iostream>
+#include <cctype>
+using namespace std;
+
+int main() {
+    char c;
+
+    cout << "Ingrese un caracter: ";
+    cin >> c;
+
+    if (isalpha(c)) {
+		cout << "Es un caracter...";
+	} else if (isdigit(c)) {
+		cout << "Es un numero...";
+	} else {
+		cout << "Es otro caracter...";
+	}
+
+    return 0;
+}
+
+9.-
+#include <iostream>
+#include <string>
+#include <cctype>
+#include <windows.h>
+using namespace std;
+
+int main() {
+    SetConsoleOutputCP(65001);
+    SetConsoleCP(65001);
+
+    string clave;
+    cout << "Ingrese una contraseña: ";
+    getline(cin, clave);
+
+    bool min = false, may = false;
+    for (int i = 0; i < clave.length(); i++) {
+        if (islower(clave[i])) min = true;
+        else if (isupper(clave[i])) may = true;
+    }
+
+    if (clave.length() < 8) cout << "Debe tener al menos 8 caracteres..." << endl;
+    if (!min) cout << "Debe tener al menos una minuscula..." << endl;
+    if (!may) cout << "Debe tener al menos una mayuscula..." << endl;
+    if (clave.length() >= 8 && min && may) cout << "Contraseña correcta..." << endl;
+
+    return 0;
+}
+
+10.-
+#include <iostream>
+#include <string>
+#include <cctype>
+using namespace std;
+
+int main() {
+    string cad1, cad2;
+    cout << "Ingrese la primera cadena: ";
+    getline(cin, cad1);
+    cout << "Ingrese la segunda cadena: ";
+    getline(cin, cad2);
+    for (int i = 0; i < cad1.length(); i++)
+        cad1[i] = tolower(cad1[i]);
+
+    for (int i = 0; i < cad2.length(); i++)
+        cad2[i] = tolower(cad2[i]);
+    if (cad1.compare(cad2) == 0)
+        cout << "Son iguales" << endl;
+    else
+        cout << "Son diferentes" << endl;
+
+    return 0;
+}
+
+11.-
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+    string texto;
+    cout << "Ingrese una frase: ";
+    getline(cin, texto);
+
+    int palabras = 1;  
+    for (int i = 0; i < texto.length(); i++) {
+        if (texto[i] == ' ' && texto[i + 1] != ' ')
+            palabras++;
+    }
+    cout << "La frase tiene " << palabras << " palabras." << endl;
+    return 0;
+}
+
+12.-
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+int main() {
+    char nombre1[30], nombre2[30];
+
+    cout << "Ingrese el primer nombre: ";
+    cin.getline(nombre1, 30);
+    cout << "Ingrese el segundo nombre: ";
+    cin.getline(nombre2, 30);
+
+    if (strcmp(nombre1, nombre2) == 0)
+        cout << "Son iguales" << endl;
+    else
+        cout << "Son diferentes" << endl;
+
+    return 0;
+}
+
+13.-
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+    string oracion;
+    cout << "Ingrese una oración: ";
+    getline(cin, oracion);
+
+    int palabras = 0;
+    bool enPalabra = false;
+
+    for (int i = 0; i < oracion.length(); i++) {
+        if (oracion[i] == ' ') {
+            enPalabra = false;
+        } else if (!enPalabra) {
+            palabras++;
+            enPalabra = true;
+        }
+    }
+
+    cout << "La oración tiene " << palabras << " palabras." << endl;
+    return 0;
+}
+
+14.-
+#include <iostream>
+#include <string>
+#include <cctype>
+using namespace std;
+
+int main() {
+    string clave;
+    cout << "Ingrese una contraseña: ";
+    getline(cin, clave);
+
+    bool may = false, min = false, num = false;
+
+    for (int i = 0; i < clave.length(); i++) {
+        if (isupper(clave[i])) may = true;
+        else if (islower(clave[i])) min = true;
+        else if (isdigit(clave[i])) num = true;
+    }
+
+    if (clave.length() < 8) cout << "Debe tener al menos 8 caracteres..." << endl;
+    if (!may) cout << "Debe tener al menos una mayúscula..." << endl;
+    if (!min) cout << "Debe tener al menos una minúscula..." << endl;
+    if (!num) cout << "Debe tener al menos un número..." << endl;
+
+    if (clave.length() >= 8 && may && min && num)
+        cout << "Contraseña válida" << endl;
+
+    return 0;
+}
+
+15.-
+#include <iostream>
+#include <string>
+#include <cctype>
+using namespace std;
+
+int main() {
+    string frase;
+    cout << "Ingrese una frase: ";
+    getline(cin, frase);
+
+    int letras = 0, digitos = 0, simbolos = 0;
+
+    for (int i = 0; i < frase.length(); i++) {
+        if (isalpha(frase[i])) letras++;
+        else if (isdigit(frase[i])) digitos++;
+        else if (ispunct(frase[i])) simbolos++;
+    }
+
+    cout << "Caracteres alfabéticos: " << letras << endl;
+    cout << "Caracteres numéricos: " << digitos << endl;
+    cout << "Símbolos: " << simbolos << endl;
+
+    return 0;
+}
+
+16.-
+#include <iostream>
+#include <string>
+#include <cctype>
+using namespace std;
+
+int main() {
+    string palabra;
+    cout << "Ingrese una palabra: ";
+    getline(cin, palabra);
+
+    for (int i = 0; i < palabra.length(); i++) {
+        switch (tolower(palabra[i])) {
+            case 'a': palabra[i] = '@'; break;
+            case 'e': palabra[i] = '3'; break;
+            case 'i': palabra[i] = '1'; break;
+            case 'o': palabra[i] = '0'; break;
+            case 'u': palabra[i] = '#'; break;
+        }
+    }
+
+    cout << palabra << endl;
+    return 0;
+}
+
+17.-
+#include <iostream>
+#include <string>
+#include <cctype>
+using namespace std;
+
+int main() {
+    string parrafo;
+    cout << "Ingrese un párrafo: ";
+    getline(cin, parrafo);
+
+    int letras = 0, numeros = 0, espacios = 0, simbolos = 0;
+    int mayusculas = 0, palabras = 0;
+    bool enPalabra = false;
+
+    for (int i = 0; i < parrafo.length(); i++) {
+        char c = parrafo[i];
+
+        if (isalpha(c)) {
+            letras++;
+            if (isupper(c)) mayusculas++;
+        }
+        else if (isdigit(c)) numeros++;
+        else if (isspace(c)) espacios++;
+        else if (ispunct(c)) simbolos++;
+
+        if (isspace(c)) {
+            enPalabra = false;
+        } else if (!enPalabra) {
+            palabras++;
+            enPalabra = true;
+        }
+    }
+
+    double porcentaje = 0;
+    if (letras > 0) porcentaje = mayusculas * 100.0 / letras;
+
+    cout << "Letras: " << letras << endl;
+    cout << "Números: " << numeros << endl;
+    cout << "Espacios: " << espacios << endl;
+    cout << "Símbolos: " << simbolos << endl;
+    cout << "Palabras: " << palabras << endl;
+    cout << "Porcentaje de mayúsculas: " << porcentaje << "%" << endl;
+
+    return 0;
+}
+
+18.-
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+    string palabra;
+    cout << "Ingrese una palabra: ";
+    getline(cin, palabra);
+
+    int i = 1;
+    while (i < palabra.length()) {
+        if (palabra[i] == palabra[i - 1])
+            palabra.erase(i, 1);
+        else
+            i++;
+    }
+
+    cout << palabra << endl;
+    return 0;
+}
+
+19.-
+#include <iostream>
+#include <string>
+#include <cctype>
+using namespace std;
+
+int main() {
+    string oracion;
+    cout << "Ingrese una oración: ";
+    getline(cin, oracion);
+
+    if (oracion.empty()) {
+        cout << "No ingresó nada." << endl;
+        return 0;
+    }
+
+    char ultimo = oracion[oracion.length() - 1];
+
+    if (ultimo == '.') cout << "Declarativa" << endl;
+    else if (ultimo == '?') cout << "Interrogativa" << endl;
+    else if (ultimo == '!') cout << "Exclamativa" << endl;
+    else cout << "Tipo no identificado" << endl;
+
+    int letras = 0, palabras = 0;
+    bool enPalabra = false;
+
+    for (int i = 0; i < oracion.length(); i++) {
+        if (isalpha(oracion[i])) letras++;
+
+        if (isspace(oracion[i])) {
+            enPalabra = false;
+        } else if (!enPalabra) {
+            palabras++;
+            enPalabra = true;
+        }
+    }
+
+    cout << "Letras: " << letras << endl;
+    cout << "Palabras: " << palabras << endl;
+    return 0;
+}
+
+20.-
+#include <iostream>
+#include <string>
+#include <cctype>
+using namespace std;
+
+int main() {
+    string parrafo;
+    cout << "Ingrese un párrafo: ";
+    getline(cin, parrafo);
+
+    int letras = 0, numeros = 0, espacios = 0, signos = 0, palabras = 0;
+    bool enPalabra = false;
+
+    for (int i = 0; i < parrafo.length(); i++) {
+        char c = parrafo[i];
+
+        if (isalpha(c)) letras++;
+        else if (isdigit(c)) numeros++;
+        else if (isspace(c)) espacios++;
+        else if (ispunct(c)) signos++;
+
+        if (isspace(c)) {
+            enPalabra = false;
+        } else if (!enPalabra) {
+            palabras++;
+            enPalabra = true;
+        }
+    }
+
+    cout << "Letras: " << letras << endl;
+    cout << "Números: " << numeros << endl;
+    cout << "Espacios: " << espacios << endl;
+    cout << "Signos: " << signos << endl;
+    cout << "Palabras: " << palabras << endl;
+    return 0;
+}
+
+21.-
+#include <iostream>
+#include <string>
+#include <cctype>
+using namespace std;
+
+int main() {
+    string frase, limpia = "";
+    cout << "Ingrese una palabra o frase: ";
+    getline(cin, frase);
+
+    // Quedarse solo con letras y números, en minúsculas
+    for (int i = 0; i < frase.length(); i++) {
+        if (isalnum(frase[i]))
+            limpia += tolower(frase[i]);
+    }
+
+    bool palindromo = true;
+    int inicio = 0, fin = limpia.length() - 1;
+
+    while (inicio < fin) {
+        if (limpia[inicio] != limpia[fin]) {
+            palindromo = false;
+            break;
+        }
+        inicio++;
+        fin--;
+    }
+
+    if (palindromo)
+        cout << "Es palíndromo" << endl;
+    else
+        cout << "No es palíndromo" << endl;
+
+    return 0;
+}
+
+22.-
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+    const int N = 5;
+    string palabras[N];
+
+    for (int i = 0; i < N; i++) {
+        cout << "Palabra " << i + 1 << ": ";
+        getline(cin, palabras[i]);
+    }
+
+    // Burbuja
+    for (int i = 0; i < N - 1; i++) {
+        for (int j = 0; j < N - 1 - i; j++) {
+            if (palabras[j].compare(palabras[j + 1]) > 0) {
+                string aux = palabras[j];
+                palabras[j] = palabras[j + 1];
+                palabras[j + 1] = aux;
+            }
+        }
+    }
+
+    cout << "\nOrdenadas:" << endl;
+    for (int i = 0; i < N; i++)
+        cout << palabras[i] << endl;
+
+    return 0;
+}
+
+23.-
+#include <iostream>
+#include <string>
+#include <cctype>
+using namespace std;
+
+int main() {
+    string frase;
+    cout << "Ingrese una frase: ";
+    getline(cin, frase);
+
+    int i = 0;
+    while (i < frase.length()) {
+        if (!isalpha(frase[i]))
+            frase.erase(i, 1);
+        else
+            i++;
+    }
+
+    cout << frase << endl;
+    return 0;
+}
+
+24.-
+#include <iostream>
+#include <string>
+#include <cctype>
+using namespace std;
+
+string aMinusculas(string texto) {
+    for (int i = 0; i < texto.length(); i++)
+        texto[i] = tolower(texto[i]);
+    return texto;
+}
+
+string aMayusculas(string texto) {
+    for (int i = 0; i < texto.length(); i++)
+        texto[i] = toupper(texto[i]);
+    return texto;
+}
+
+int contarVocales(string texto) {
+    int cont = 0;
+    for (int i = 0; i < texto.length(); i++) {
+        switch (tolower(texto[i])) {
+            case 'a': case 'e': case 'i': case 'o': case 'u':
+                cont++;
+        }
+    }
+    return cont;
+}
+
+string invertir(string texto) {
+    string resultado = "";
+    for (int i = texto.length() - 1; i >= 0; i--)
+        resultado += texto[i];
+    return resultado;
+}
+
+int main() {
+    string frase;
+    int opcion;
+
+    cout << "Ingrese una frase: ";
+    getline(cin, frase);
+
+    cout << "\n1. Convertir a minúsculas" << endl;
+    cout << "2. Convertir a mayúsculas" << endl;
+    cout << "3. Contar vocales" << endl;
+    cout << "4. Invertir texto" << endl;
+    cout << "Elija una opción: ";
+    cin >> opcion;
+
+    switch (opcion) {
+        case 1:
+            cout << aMinusculas(frase) << endl;
+            break;
+        case 2:
+            cout << aMayusculas(frase) << endl;
+            break;
+        case 3:
+            cout << "Vocales: " << contarVocales(frase) << endl;
+            break;
+        case 4:
+            cout << invertir(frase) << endl;
+            break;
+        default:
+            cout << "Opción no válida" << endl;
+    }
+
+    return 0;
+}
